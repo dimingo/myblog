@@ -1,6 +1,12 @@
 <?php
 
+use App\Models\Post;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use League\CommonMark\Extension\FrontMatter\Data\SymfonyYamlFrontMatterParser;
+use PhpParser\Node\Stmt\Return_;
+use Spatie\YamlFrontMatter\YamlFrontMatter;
+use Symfony\Component\Translation\Dumper\YamlFileDumper;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,22 +20,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('posts');
-});
-Route::get('posts/{post}', function($slug){
+
+
+    $posts = Post::all();
+
     
-    $path= __DIR__."/../resources/posts/{$slug}.html";
+    return view('posts', ['posts' => $posts]);
 
-if (! file_exists($path)){
-    
 
-    dd("file Does Not Exist");
 
-}
-
- $post =file_get_contents($path);
-
-    return view('post', [
-        'post'=> $post
-    ]);
+    // return view('posts');
 });
+
+
+
+
+Route::get('posts/{post}', function ($slug) {
+    //Find a post by its slug and pass it to a view called post
+  
+
+    return view('post', ['post' =>Post::find($slug)]);
+})->where('post', '[A-z_\-]+');
