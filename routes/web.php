@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Category;
 use App\Models\Post;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use League\CommonMark\Extension\FrontMatter\Data\SymfonyYamlFrontMatterParser;
@@ -21,23 +23,31 @@ use Symfony\Component\Translation\Dumper\YamlFileDumper;
 
 Route::get('/', function () {
 
-
-    $posts = Post::all();
-
+    return view('posts',[
+        
+        'posts' =>Post::with('category')->get()
     
-    return view('posts', ['posts' => $posts]);
+    ]);
 
 
 
-    // return view('posts');
+
 });
 
 
 
 
-Route::get('posts/{post}', function ($slug) {
+Route::get('posts/{post}', function ($id) {
     //Find a post by its slug and pass it to a view called post
-  
+    $post = post::find($id);
 
-    return view('post', ['post' =>Post::find($slug)]);
-})->where('post', '[A-z_\-]+');
+
+
+    return view('post', ['post' => Post::findorFail($id)]);
+});
+
+Route::get ('categories/{category:slug}', function(Category $category){
+    return view('posts', [
+        'posts'=>$category->posts
+    ]);
+});
