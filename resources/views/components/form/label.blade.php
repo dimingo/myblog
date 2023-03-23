@@ -1,0 +1,1 @@
+<label class="px-2">{{$slot}}</label>
